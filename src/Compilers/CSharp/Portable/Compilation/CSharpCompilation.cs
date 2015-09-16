@@ -2612,9 +2612,20 @@ namespace Microsoft.CodeAnalysis.CSharp
             return builder.ToImmutableAndFree();
         }
 
+        private static bool IsSyntaxTreePdbEmbedded(SyntaxTree tree)
+        {
+            return tree.GetRoot().GetAnnotations().Any(a => a.Kind == "EmbedSourceInPdb");
+        }
+
         private static Cci.DebugSourceDocument MakeDebugSourceDocumentForTree(string normalizedPath, SyntaxTree tree)
         {
-            return new Cci.DebugSourceDocument(normalizedPath, Cci.DebugSourceDocument.CorSymLanguageTypeCSharp, () => tree.GetChecksumAndAlgorithm());
+            byte[] pdbEmbeddedSourceBytes = null;
+            if(IsSyntaxTreePdbEmbedded(tree))
+            {
+                SourceText text = tree.GetText();
+                pdbEmbeddedSourceBytes = text.Encoding.GetBytes(text.ToString());
+            }
+            return new Cci.DebugSourceDocument(normalizedPath, Cci.DebugSourceDocument.CorSymLanguageTypeCSharp, () => tree.GetChecksumAndAlgorithm(), pdbEmbeddedSourceBytes);
         }
 
         private void SetupWin32Resources(PEModuleBuilder moduleBeingBuilt, Stream win32Resources, DiagnosticBag diagnostics)

@@ -132,7 +132,8 @@ namespace Microsoft.Cci
             DefineKickoffMethod,
             OpenMapTokensToSourceSpans,
             MapTokenToSourceSpan,
-            CloseMapTokensToSourceSpans
+            CloseMapTokensToSourceSpans,
+            SetSource
         }
 
         public bool LogOperation(PdbWriterOperation op)
@@ -948,6 +949,16 @@ namespace Microsoft.Cci
                         _callLogger.LogArgument(language.ToByteArray());
                         _callLogger.LogArgument(vendor.ToByteArray());
                         _callLogger.LogArgument(type.ToByteArray());
+                    }
+                    if(document.EmbeddedSource != null)
+                    {
+                        writer.SetSource((uint)document.EmbeddedSource.Length, document.EmbeddedSource);
+                        if (_callLogger.LogOperation(OP.SetSource))
+                        {
+                            //logging length is irrelevant, it has no additional entropy
+                            //for performance it might be better to log ChecksumAndAlgorithm instead?
+                            _callLogger.LogArgument(document.EmbeddedSource);
+                        }
                     }
                 }
                 catch (Exception ex)

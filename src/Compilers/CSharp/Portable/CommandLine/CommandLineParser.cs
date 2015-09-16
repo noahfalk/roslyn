@@ -58,6 +58,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool concurrentBuild = true;
             bool emitPdb = false;
             string pdbPath = null;
+            bool embedSourceInPdb = false;
             bool noStdLib = false;
             string outputDirectory = baseDirectory;
             string outputFileName = null;
@@ -971,6 +972,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                             additionalFiles.AddRange(ParseAdditionalFileArgument(value, baseDirectory, diagnostics));
                             continue;
+                        case "embedSource":
+                            embedSourceInPdb = true;
+                            continue;
                     }
                 }
 
@@ -1102,6 +1106,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 OutputFileName = outputFileName,
                 PdbPath = pdbPath,
                 EmitPdb = emitPdb,
+                EmbedSourceInPdb = embedSourceInPdb,
                 OutputDirectory = outputDirectory,
                 DocumentationPath = documentationPath,
                 ErrorLogPath = errorLogPath,

@@ -75,6 +75,11 @@ namespace Microsoft.CodeAnalysis
         public bool EmitPdb { get; internal set; }
 
         /// <summary>
+        /// True to embed source files in the PDB.
+        /// </summary>
+        public bool EmbedSourceInPdb { get; internal set; }
+
+        /// <summary>
         /// Absolute path of the output directory.
         /// </summary>
         public string OutputDirectory { get; internal set; }

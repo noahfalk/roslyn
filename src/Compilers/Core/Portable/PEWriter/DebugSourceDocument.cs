@@ -19,6 +19,7 @@ namespace Microsoft.Cci
         private readonly string _location;
         private readonly Guid _language;
         private readonly bool _isComputedChecksum;
+        private readonly byte[] _embeddedSource;
 
         private readonly Task<ValueTuple<ImmutableArray<byte>, Guid>> _checksumAndAlgorithm;
 
@@ -33,11 +34,12 @@ namespace Microsoft.Cci
         /// <summary>
         /// Use to create a document when checksum is computed based on actual source stream.
         /// </summary>
-        public DebugSourceDocument(string location, Guid language, Func<ValueTuple<ImmutableArray<byte>, Guid>> checksumAndAlgorithm)
+        public DebugSourceDocument(string location, Guid language, Func<ValueTuple<ImmutableArray<byte>, Guid>> checksumAndAlgorithm, byte[] embeddedSource = null)
             : this(location, language)
         {
             _checksumAndAlgorithm = Task.Run(checksumAndAlgorithm);
             _isComputedChecksum = true;
+            _embeddedSource = embeddedSource;
         }
 
         /// <summary>
@@ -108,6 +110,14 @@ namespace Microsoft.Cci
             }
         }
 
+        public byte[] EmbeddedSource
+        {
+            get
+            {
+                return _embeddedSource;
+            }
+        }
+
         /// <summary>
         /// returns true when checksum was computed base on an actual source stream
         /// as opposed to be suggested via a checksum directive/pragma
@@ -119,5 +129,7 @@ namespace Microsoft.Cci
                 return _isComputedChecksum;
             }
         }
+
+        
     }
 }

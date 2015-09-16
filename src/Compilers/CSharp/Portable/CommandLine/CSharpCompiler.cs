@@ -160,7 +160,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                return ParseFile(parseOptions, scriptParseOptions, content, file);
+                SyntaxTree tree = ParseFile(parseOptions, scriptParseOptions, content, file);
+                if(Arguments.EmbedSourceInPdb)
+                {
+                    SyntaxNode root = tree.GetRoot();
+                    root = root.WithAdditionalAnnotations(new SyntaxAnnotation("EmbedSourceInPdb"));
+                    tree = tree.WithRootAndOptions(root, tree.Options);
+                }
+                return tree;
             }
         }
 
